@@ -9,6 +9,12 @@ function Juego(){
             this.jugadores[nick] = jugador;
         }
     }
+
+    this.crearPartida = function(nick, numJug){
+        //Crear codigo unico
+        //crear la instancia de partida
+        //asignarla a la coleccion partidas
+    }
 }
 
 function Jugador(nick, juego){
