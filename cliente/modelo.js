@@ -29,22 +29,27 @@ function Juego(){
         codigo = this.obtenerCodigo();
       //hay una pequeña probabilidad de que el código no exista
 
-        while(this.partidas[codigo]){
+        /*while(this.partidas[codigo]){
             codigo = this.obtenerCodigo();
-        };
+        };*/
             //si el código no existe se crea una partida con el código pasado por parámetro
+      
+      
         var partida = new Partida(codigo,jugador,numJug);
         this.partidas[codigo] = partida;
-        
+        jugador = partida.propietario;       
 
-        //crear la instancia de partida
-
-        var partida = new Partida(codigo, nick, numJug); //se refiere al nick del jugador que ha creado la partida
-
-        //asignarla a la coleccion partidas
-        this.partidas[codigo] = partida;
 
         return partida;
+    }
+
+    this.obtenerTodasPartidas = function(){
+        var lista = [];
+        for(each in this.partidas){
+            var partida = this.partidas[each];
+            lista.push({propietario:partida.propietario, codigo:each});
+        }
+        return lista;
     }
 
 
@@ -105,7 +110,8 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
     this.codigo = codigo;
     this.propietario = jugador.nick;
     this.numJug = numJug;
-    this.jugadores ={};
+    this.jugadores = {};
+    this.cartas = [];
     this.fase = new Inicial();
 
     //métodos para que un jugador se pueda unir a una partida (dependiendo de la fase en la que se encuentre la partida)
@@ -123,8 +129,20 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
 		return Object.keys(this.jugadores).length;
 	}
 
+    this.crearMazo = function(){
+        var colores = ["azul", "amarillo", "rojo", "verde"];
+        
+        for (i = 0; i < colores.length; i++){
+            for (j = 1; i < 10; j++){
+            this.cartas.push(new Numero(j,colores[i]));
+            this.cartas.push(new Numero(j,colores[i]));
+            }
+        }
+    }
 
+    this.crearMazo();
     this.unirAPartida(jugador);
+
 }
 
 
@@ -177,7 +195,32 @@ function Final(){
 
 /* CARTA */
 
-function Carta(color, tipo){
+function Numero(valor, color){
     this.color = color;
-    this.tipo = tipo;
+    this.valor = valor;
+}
+
+function Cambio(valor, color){
+    this.color = color;
+    this.valor = valor;
+}
+
+function Bloqueo(valor, color){
+    this.color = color;
+    this.valor = valor;
+}
+
+function Mas2(valor, color){
+    this.color = color;
+    this.valor = valor;
+}
+
+function Comodin(valor, color){
+    this.color = color;
+    this.valor = valor;
+}
+
+function Comodin4(valor, color){
+    this.color = color;
+    this.valor = valor;
 }
