@@ -132,12 +132,24 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
     this.crearMazo = function(){
         var colores = ["azul", "amarillo", "rojo", "verde"];
         
+
         for (i = 0; i < colores.length; i++){
             for (j = 1; i < 10; j++){
             this.cartas.push(new Numero(j,colores[i]));
             this.cartas.push(new Numero(j,colores[i]));
+
             }
+            this.cartas.push(new Numero(0,colores[i]));
+            this.cartas.push(new Cambio(colores[i]));
+            this.cartas.push(new Cambio(colores[i]));
+            this.cartas.push(new Mas2(colores[i]));
+            this.cartas.push(new Mas2(colores[i]));
+            this.cartas.push(new Bloqueo(colores[i]));
+            this.cartas.push(new Bloqueo(colores[i]));
+            this.cartas.push(new Comodin(colores[i]));
+            this.cartas.push(new Comodin4(colores[i]));
         }
+
     }
 
     this.crearMazo();
@@ -200,27 +212,22 @@ function Numero(valor, color){
     this.valor = valor;
 }
 
-function Cambio(valor, color){
+function Cambio(color){
     this.color = color;
-    this.valor = valor;
 }
 
-function Bloqueo(valor, color){
+function Bloqueo(color){
     this.color = color;
-    this.valor = valor;
 }
 
-function Mas2(valor, color){
+function Mas2(color){
     this.color = color;
-    this.valor = valor;
 }
 
-function Comodin(valor, color){
-    this.color = color;
-    this.valor = valor;
+function Comodin(){
+
 }
 
-function Comodin4(valor, color){
-    this.color = color;
-    this.valor = valor;
+function Comodin4(){
+
 }
