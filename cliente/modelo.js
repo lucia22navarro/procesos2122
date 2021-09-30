@@ -134,20 +134,19 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
         
 
         for (i = 0; i < colores.length; i++){
+            this.cartas.push(new Numero(0,colores[i]));
+            this.cartas.push(new Comodin(colores[i]));
+            this.cartas.push(new Comodin4(colores[i]));
+
             for (j = 1; i < 10; j++){
             this.cartas.push(new Numero(j,colores[i]));
             this.cartas.push(new Numero(j,colores[i]));
-
             }
-            this.cartas.push(new Numero(0,colores[i]));
-            this.cartas.push(new Cambio(colores[i]));
+            for (j = 1; j <=2; j++ ){
             this.cartas.push(new Cambio(colores[i]));
             this.cartas.push(new Mas2(colores[i]));
-            this.cartas.push(new Mas2(colores[i]));
             this.cartas.push(new Bloqueo(colores[i]));
-            this.cartas.push(new Bloqueo(colores[i]));
-            this.cartas.push(new Comodin(colores[i]));
-            this.cartas.push(new Comodin4(colores[i]));
+            }
         }
 
     }
