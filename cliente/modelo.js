@@ -29,9 +29,9 @@ function Juego(){
         codigo = this.obtenerCodigo();
       //hay una pequeña probabilidad de que el código no exista
 
-        /*while(this.partidas[codigo]){
+        while(this.partidas[codigo]){
             codigo = this.obtenerCodigo();
-        };*/
+        };
             //si el código no existe se crea una partida con el código pasado por parámetro
       
       
@@ -90,6 +90,8 @@ function Juego(){
 function Jugador(nick, juego){
     this.nick = nick;
     this.juego = juego;
+    this.mano=[];
+    this.codigoPartida;
 
     this.crearPartida = function(numJug){
         return this.juego.crearPartida(nick, numJug);
@@ -101,6 +103,29 @@ function Jugador(nick, juego){
         //delega en juego para unir al usuario a la partida
         this.juego.unirAPartida(codigo, nick);
     }
+
+    this.dameCartas = function(num){
+        var partida = obtenerPartida(this.codigoPartida);
+        partida.asignarCartas(num);
+    }
+
+    this.manoInicial = function(){
+        var partida = this.obtenerPartida(this.codigoPartida);
+        this.mano = dameCartas(7);
+    }
+
+    this.robar = function(num){
+        var partida = this.obtenerPartida(this.codigoPartida);
+        var robadas = dameCartas(num);
+        var tmp = this.mano;
+        this.mano = tmp.concat(robadas);
+    }
+
+    this.obtenerPartida = function(codigo){
+        return this.juego.partidas[codigo];
+    }
+
+
 }
 
 
@@ -111,7 +136,7 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
     this.propietario = jugador.nick;
     this.numJug = numJug;
     this.jugadores = {};
-    this.cartas = [];
+    this.mazo = [];
     this.fase = new Inicial();
 
     //métodos para que un jugador se pueda unir a una partida (dependiendo de la fase en la que se encuentre la partida)
@@ -122,6 +147,7 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
 
     this.puedeUnirAPartida = function(jugador){
         this.jugadores[jugador.nick] = jugador;
+        jugador.codigoPartida = this.codigo;
     }
 
     this.numeroJugadores=function(){
@@ -134,21 +160,37 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
         
 
         for (i = 0; i < colores.length; i++){
-            this.cartas.push(new Numero(0,colores[i]));
-            this.cartas.push(new Comodin(colores[i]));
-            this.cartas.push(new Comodin4(colores[i]));
-
-            for (j = 1; i < 10; j++){
-            this.cartas.push(new Numero(j,colores[i]));
-            this.cartas.push(new Numero(j,colores[i]));
+            for (j = 1; j < 10; j++){
+                this.mazo.push(new Numero(j,colores[i]));
+                this.mazo.push(new Numero(j,colores[i]));
             }
-            for (j = 1; j <=2; j++ ){
-            this.cartas.push(new Cambio(colores[i]));
-            this.cartas.push(new Mas2(colores[i]));
-            this.cartas.push(new Bloqueo(colores[i]));
-            }
+            this.mazo.push(new Cambio(colores[i]));
+            this.mazo.push(new Mas2(colores[i]));
+            this.mazo.push(new Bloqueo(colores[i]));
+            this.mazo.push(new Cambio(colores[i]));
+            this.mazo.push(new Mas2(colores[i]));
+            this.mazo.push(new Bloqueo(colores[i]));
+            this.mazo.push(new Numero(0,colores[i]));
+            this.mazo.push(new Comodin());
+            this.mazo.push(new Comodin4());
         }
 
+
+    }
+
+    this.asignarCartas = function(num){
+        var aux = [];
+        for (i = 0; i < num; i++){
+            aux.push(this.mazo.splice(this.asignarUnaCarta()));
+        }
+        return aux;
+    }
+
+    this.asignarUnaCarta = function(){
+        var maxCartas = this.mazo.length;
+        var indice = randomInt(1,maxCartas);
+        var carta = this.mazo[indice];
+        return carta;
     }
 
     this.crearMazo();
