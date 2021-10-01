@@ -41,12 +41,12 @@ it("Condiciones iniciales", function(){
       return each.color=="rojo";
     });
     expect(amarillo.length).toBe(25);
-    var amarillo=partida.mazo.filter(function(each){
+    var azul=partida.mazo.filter(function(each){
       return each.color=="rojo";
     });
     expect(azul.length).toBe(25);
-    var azul=partida.mazo.filter(function(each){
-      return each.color=="rojo";
+    var comodin=partida.mazo.filter(function(each){
+      return each.tipo=="comodin";
     });
     expect(comodin.length).toBe(4);
     var comodin4=partida.mazo.filter(function(each){

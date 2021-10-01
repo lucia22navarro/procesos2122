@@ -104,19 +104,15 @@ function Jugador(nick, juego){
         this.juego.unirAPartida(codigo, nick);
     }
 
-    this.dameCartas = function(num){
-        var partida = obtenerPartida(this.codigoPartida);
-        partida.asignarCartas(num);
-    }
 
     this.manoInicial = function(){
         var partida = this.obtenerPartida(this.codigoPartida);
-        this.mano = dameCartas(7);
+        this.mano = partida.asignarCartas(7);
     }
 
     this.robar = function(num){
         var partida = this.obtenerPartida(this.codigoPartida);
-        var robadas = dameCartas(num);
+        var robadas = partida.asignarCartas(num);
         var tmp = this.mano;
         this.mano = tmp.concat(robadas);
     }
@@ -171,21 +167,23 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
             this.mazo.push(new Mas2(colores[i]));
             this.mazo.push(new Bloqueo(colores[i]));
             this.mazo.push(new Numero(0,colores[i]));
-            this.mazo.push(new Comodin());
-            this.mazo.push(new Comodin4());
+            this.mazo.push(new Comodin("comodin"));
+            this.mazo.push(new Comodin4("comodin4"));
         }
-
-
+        
     }
 
     this.asignarCartas = function(num){
         var aux = [];
+        
         for (i = 0; i < num; i++){
-            aux.push(this.mazo.splice(this.asignarUnaCarta()));
+            var carta = this.asignarUnaCarta();
+            aux.push(this.mazo.splice(this.mazo.indexOf(carta), 1));
         }
         return aux;
     }
 
+    //método auxiliar para asignar cartas de una en una
     this.asignarUnaCarta = function(){
         var maxCartas = this.mazo.length;
         var indice = randomInt(1,maxCartas);
@@ -265,10 +263,10 @@ function Mas2(color){
     this.color = color;
 }
 
-function Comodin(){
-
+function Comodin(tipo){
+    this.tipo = tipo;
 }
 
-function Comodin4(){
-
+function Comodin4(tipo){
+    this.tipo = tipo;
 }
