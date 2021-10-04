@@ -121,6 +121,11 @@ function Jugador(nick, juego){
         return this.juego.partidas[codigo];
     }
 
+    this.pasarTurno = function(){
+        var partida = this.obtenerPartida(this.codigoPartida);
+        partida.pasarTurno();
+    }
+
 
 }
 
@@ -133,6 +138,13 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
     this.numJug = numJug;
     this.jugadores = {};
     this.mazo = [];
+    this.mesa = [];
+    //el sentido por defecto será horario (a derechas)
+    //cuando haya un cambio de sentido se cambiará este valor a -1
+    //sentido antihorario (a izquierdas)
+    this.sentido = 1;
+    this.jugadorActual;
+    this.nicks = [];
     this.fase = new Inicial();
 
     //métodos para que un jugador se pueda unir a una partida (dependiendo de la fase en la que se encuentre la partida)
@@ -144,6 +156,7 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
     this.puedeUnirAPartida = function(jugador){
         this.jugadores[jugador.nick] = jugador;
         jugador.codigoPartida = this.codigo;
+        this.nicks.push(jugador.nick);
     }
 
     this.numeroJugadores=function(){
@@ -191,6 +204,36 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
         return carta;
     }
 
+    //método que lanza la carta inicial a la mesa cuando comienza la partida (se utiliza en la clase "Inicial")
+
+    this.cartaInicial = function(){
+        this.mesa.push(this.asignarCartas(1));
+        return this.mesa;
+    }
+
+    //método que asigna el turno inicial cuando se crea la partida
+    //por defecto será el creador de la partida
+    this.turnoInicial = function(jugador){
+        var n = jugador.nick;
+        var aux = this.nicks.indexOf(n);
+        this.jugadorActual = this.nicks[aux];
+        return jugadorActual;
+    }
+
+    //método para pasar de turno. dependerá del sentido en el que se 
+    //encuentre la partida
+    this.pasarTurno = function(jugador){
+        var n = jugador.nick;
+        var aux = this.nicks.indexOf(n);
+        if (aux == 0 && this.sentido == -1){
+            aux = this.nicks.length;
+        } else if (aux == this.nicks.length && this.sentido == 1){
+            aux = 0;
+        }
+        this.jugadorActual = this.nicks[aux + this.sentido];
+        return jugadorActual;
+    }
+
     this.crearMazo();
     this.unirAPartida(jugador);
 
@@ -201,14 +244,24 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
 
 function Inicial(){
     this.nombre = "inicial";
+
+
     this.unirAPartida = function(partida, jugador){
         //si numero jugadores < numJug
 
         partida.puedeUnirAPartida(jugador);
         if (partida.numeroJugadores() == partida.numJug){
             partida.fase = new Jugando();
+            // cuando comienza la partida, se asigna la mano inicial a cada jugador
+            /*for (each in partida.jugadores){
+                each.manoInicial();
+            }*/
+
+            //cuando comienza la partida, se lanza la carta inicial
+            partida.cartaInicial();
         }
     }
+
     this.esInicial = function(){
         return true;
     }
