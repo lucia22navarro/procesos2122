@@ -93,6 +93,10 @@ function Jugador(nick, juego){
     this.mano=[];
     this.codigoPartida;
 
+    this.getNick = function(){
+        return this.nick;
+    }
+
     this.crearPartida = function(numJug){
         return this.juego.crearPartida(nick, numJug);
         
@@ -124,6 +128,11 @@ function Jugador(nick, juego){
     this.pasarTurno = function(){
         var partida = this.obtenerPartida(this.codigoPartida);
         partida.pasarTurno();
+    }
+
+    this.jugarCarta = function(carta){
+        var partida = this.obtenerPartida(this.codigoPartida);
+        partida.jugarCarta(carta);
     }
 
 
@@ -213,29 +222,67 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
 
     //método que asigna el turno inicial cuando se crea la partida
     //por defecto será el creador de la partida
-    this.turnoInicial = function(jugador){
-        var n = jugador.nick;
-        var aux = this.nicks.indexOf(n);
-        this.jugadorActual = this.nicks[aux];
-        return jugadorActual;
+    this.turnoInicial = function(){
+        this.jugadorActual = this.nicks[0];
+        return this.jugadorActual;
     }
 
     //método para pasar de turno. dependerá del sentido en el que se 
     //encuentre la partida
     this.pasarTurno = function(jugador){
-        var n = jugador.nick;
+        //sacar nick del jugador que solicita pasarTurno
+        var n = jugador.getNick();
+
+        //obtener indice del nick del jugador
         var aux = this.nicks.indexOf(n);
+
         if (aux == 0 && this.sentido == -1){
             aux = this.nicks.length;
         } else if (aux == this.nicks.length && this.sentido == 1){
             aux = 0;
         }
         this.jugadorActual = this.nicks[aux + this.sentido];
-        return jugadorActual;
+        return this.jugadorActual;
+    }
+
+    this.jugarCarta = function(jugador, carta){
+        var i = this.mesa.length
+        //devuelve el último elemento de la mesa
+        var aux = this.mesa[i-1];
+
+        //primero comprobar si son comodines: siempre se podrán lanzar
+        if(carta.tipo ="comodin" || carta.tipo =="comodin4"){
+            this.puedeJugarCarta(jugador, carta);
+        }
+
+        //cualquier otro tipo de carta
+        else{
+
+            //comprobar si el color es igual
+            if(carta.color == aux.color){
+                this.puedeJugarCarta(jugador, carta);
+
+            //si el color no es igual, comprueba que el número sí lo es
+            }else if (carta.tipo =="numero" && aux.tipo == "numero"){
+                if(carta.valor == aux.valor){
+                    this.puedeJugarCarta(jugador, carta);
+                }
+            }
+        }
+
+    }
+
+    this.puedeJugarCarta = function(jugador, carta){
+        //retira la carta de la mano del jugador
+        var c = jugador.mano.splice(carta, 1);
+
+        //pone la carta del jugador en la mesa
+        this.mesa.push(c);
     }
 
     this.crearMazo();
     this.unirAPartida(jugador);
+    this.turnoInicial();
 
 }
 
@@ -300,19 +347,23 @@ function Final(){
 /* CARTA */
 
 function Numero(valor, color){
+    this.tipo = "numero";
     this.color = color;
     this.valor = valor;
 }
 
 function Cambio(color){
+    this.tipo="cambio";
     this.color = color;
 }
 
 function Bloqueo(color){
+    this.tipo="bloqueo";
     this.color = color;
 }
 
 function Mas2(color){
+    this.tipo="mas2";
     this.color = color;
 }
 
