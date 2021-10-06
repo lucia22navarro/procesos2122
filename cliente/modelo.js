@@ -127,12 +127,15 @@ function Jugador(nick, juego){
 
     this.pasarTurno = function(){
         var partida = this.obtenerPartida(this.codigoPartida);
-        partida.pasarTurno();
+        partida.pasarTurno(this.nick);
     }
 
     this.jugarCarta = function(carta){
         var partida = this.obtenerPartida(this.codigoPartida);
-        partida.jugarCarta(carta);
+        //la carta debe existir en la mano del jugador
+        if(carta in this.mano){
+            partida.jugarCarta(carta);
+        }
     }
 
 
@@ -148,9 +151,8 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
     this.jugadores = {};
     this.mazo = [];
     this.mesa = [];
-    //el sentido por defecto será horario (a derechas)
-    //cuando haya un cambio de sentido se cambiará este valor a -1
-    //sentido antihorario (a izquierdas)
+    //el sentido por defecto será el valor 1: sentido horario (a derechas)
+    //cuando haya un cambio de sentido se cambiará este valor a -1: sentido antihorario (a izquierdas)
     this.sentido = 1;
     this.jugadorActual;
     this.nicks = [];
@@ -216,7 +218,7 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
     //método que lanza la carta inicial a la mesa cuando comienza la partida (se utiliza en la clase "Inicial")
 
     this.cartaInicial = function(){
-        this.mesa.push(this.asignarCartas(1));
+        this.mesa.push(this.asignarCartas(randomInt()));
         return this.mesa;
     }
 
@@ -227,22 +229,31 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
         return this.jugadorActual;
     }
 
-    //método para pasar de turno. dependerá del sentido en el que se 
-    //encuentre la partida
-    this.pasarTurno = function(jugador){
+
+
+    //método para pasar de turno. dependerá del sentido en el que se encuentre la partida
+
+    this.pasarTurno = function(nickJugador){
         //sacar nick del jugador que solicita pasarTurno
-        var n = jugador.getNick();
-
+        
+        var nick = this.jugadorActual.nick;
+        
         //obtener indice del nick del jugador
-        var aux = this.nicks.indexOf(n);
 
-        if (aux == 0 && this.sentido == -1){
-            aux = this.nicks.length;
-        } else if (aux == this.nicks.length && this.sentido == 1){
-            aux = 0;
+        if (nick == nickJugador){
+            var aux = this.nicks.indexOf(nick);
+            //var siguiente = (aux + 1)%(Object.keys(this.jugadores).length);
+            //calculamos excepciones del cambio de turno:
+            //si el sentido es antihorario y llegamos al principio del array
+            if (aux == 0 && this.sentido == -1){
+                aux = this.nicks.length;
+            
+            //si el sentido es horario y llegamos al final del array
+            } else if (aux == this.nicks.length && this.sentido == 1){
+                aux = 0;
+            }
+            this.jugadorActual = this.nicks[aux + this.sentido];
         }
-        this.jugadorActual = this.nicks[aux + this.sentido];
-        return this.jugadorActual;
     }
 
     this.jugarCarta = function(jugador, carta){
@@ -373,4 +384,20 @@ function Comodin(tipo){
 
 function Comodin4(tipo){
     this.tipo = tipo;
+}
+
+
+//método para ejecutar más fácilmente el código en la consola de Chrome
+var juego;
+var partida;
+var ju1,ju2;
+
+function Prueba(){
+    juego = new Juego();
+    juego.agregarJugador("ana");
+    juego.agregarJugador("luis");
+    ju1 = juego.usuarios["ana"];
+    ju2 = juego.usuarios["luis"];
+    partida = ju1.crearPartida(2);
+    ju2.unirAPartida(partida.codigo);
 }
