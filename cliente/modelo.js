@@ -125,9 +125,9 @@ function Jugador(nick, juego){
         return this.juego.partidas[codigo];
     }
 
-    this.pasarTurno = function(){
+    this.pasarTurno = function(nick){
         var partida = this.obtenerPartida(this.codigoPartida);
-        partida.pasarTurno(this.nick);
+        partida.pasarTurno(nick);
     }
 
     this.jugarCarta = function(carta){
@@ -218,7 +218,7 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
     //método que lanza la carta inicial a la mesa cuando comienza la partida (se utiliza en la clase "Inicial")
 
     this.cartaInicial = function(){
-        this.mesa.push(this.asignarCartas(randomInt()));
+        this.mesa.push(this.asignarCartas(1));
         return this.mesa;
     }
 
@@ -241,18 +241,13 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
         //obtener indice del nick del jugador
 
         if (nick == nickJugador){
-            var aux = this.nicks.indexOf(nick);
-            //var siguiente = (aux + 1)%(Object.keys(this.jugadores).length);
-            //calculamos excepciones del cambio de turno:
-            //si el sentido es antihorario y llegamos al principio del array
-            if (aux == 0 && this.sentido == -1){
-                aux = this.nicks.length;
-            
-            //si el sentido es horario y llegamos al final del array
-            } else if (aux == this.nicks.length && this.sentido == 1){
-                aux = 0;
-            }
-            this.jugadorActual = this.nicks[aux + this.sentido];
+            var aux = this.nicks.indexOf(nickJugador);
+            var siguiente = (aux + this.sentido)%(Object.keys(this.jugadores).length);
+            this.jugadorActual = this.nicks[siguiente];
+            return this.jugadorActual;
+        }
+        else{
+            return 0;
         }
     }
 
