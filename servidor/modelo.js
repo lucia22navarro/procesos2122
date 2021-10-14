@@ -12,13 +12,17 @@ function Juego(){
 
 
     this.agregarJugador = function(nick){
+        var res = {nick : -1};
         if(!this.usuarios[nick]){
             var jugador = new Jugador(nick, this);
             this.usuarios[nick] = jugador;
+            res = {nick : nick};
         }
         else{
-            console.log("El nick ya se está usando"); 
+            console.log("El nick " + nick + " ya se está usando"); 
         }
+
+        return res;
     }
 
 
@@ -55,10 +59,13 @@ function Juego(){
 
     this.unirAPartida = function(codigo, nick){
         //comprobamos que el código existe
+        var res = {partida:-1}
         if(this.partidas[codigo]){
             var jugador = this.usuarios[nick];
             this.partidas[codigo].unirAPartida(jugador);
+            res = {partida:codigo};
         }
+        return res;
     }
 
 
@@ -437,7 +444,7 @@ function Comodin4(valor){
 }
 }
 
-
+/*
 //método para ejecutar más fácilmente el código en la consola de Chrome
 var juego;
 var partida;
@@ -459,4 +466,7 @@ function Prueba(){
     ju2.manoInicial();
     ju3.manoInicial();
     partida.cartaInicial();
-}
+}*/
+
+//esta línea es fundamental para la parte del servidor
+module.exports.Juego = Juego;
