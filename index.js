@@ -34,6 +34,7 @@ app.get("/crearPartida/:nick/:numJug", function(request, response){
     var res={codigo:-1};
     if(ju1){
         var partida = ju1.crearPartida(numJug);
+        console.log("Nueva partida de " +nick + "codigo: " +ju1.codigoPartida);
         res.codigo = ju1.codigoPartida;
     }
     response.send(res);   //hay que enviar siempre una respuesta
