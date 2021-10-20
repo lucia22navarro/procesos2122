@@ -8,15 +8,14 @@ function ClienteRest(){
         //el servidor sigue la ejecución sin esperar respuesta
         //mostrar una ruleta
     }
+
+    //crear partida
     this.crearPartida = function(nick,numJug){
         $.getJSON("/crearPartida/" + nick + "/" + numJug, function(data){
             //se ejecuta cuando conteste el servidor 
             console.log(data);
         })
     }
-
-    //crear partida
-
     //unir a partida
     this.unirAPartida = function(codigo,nick){
         $.getJSON("/unirAPartida/" + codigo + "/" + nick, function(data){
