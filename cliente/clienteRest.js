@@ -24,8 +24,8 @@ function ClienteRest(){
         })
     }
     //obtener lista de partidas
-    this.obtenerTodasPartidas = function(){
-        $.getJSON("/obtenerTodasPartidas/", function(data){
+    this.obtenerListaPartidas = function(){
+        $.getJSON("/obtenerListaPartidas/", function(data){
             //se ejecuta cuando conteste el servidor 
             console.log(data);
         })

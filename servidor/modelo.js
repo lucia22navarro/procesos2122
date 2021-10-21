@@ -356,6 +356,7 @@ function Jugando(){
 
     this.unirAPartida = function(partida,jugador){
         console.log("La partida ya ha comenzado: no puedes unirte");
+        jugador.codigoPartida = -1;
     }
 
     this.esInicial = function(){
@@ -377,6 +378,7 @@ function Final(){
 
     this.unirAPartida = function(partida,jugador){
         console.log("La partida ya ha terminado: no puedes unirte a la partida");
+        jugador.codigoPartida = -1;
     }
 
     this.esInicial = function(){

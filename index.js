@@ -1,10 +1,16 @@
 var fs = require("fs"); //librería para manejar el sistema de archivos
 var express = require("express"); //middleware para implementar aplicaciones web
 var app = express(); //creamos la instancia de express
-var server = require("http").Server(app); //creamos el servidor http
+var http = require("http").Server(app); //creamos el servidor http
+var { Server } = require("socket.io"); //importamos el objeto server para ServidorWS (punto de entrada para socket.io)
+var io = new Server(http); // entrada del objeto server
 var bodyParser = require("body-parser"); //parsear las peticiones de tipo POST
+
 var modelo = require("./servidor/modelo.js");
+var ssrv = require("./servidor/servidorWS.js");  //importamos el objeto de webSocket
+
 var juego = new modelo.Juego();
+var servidorWS = new ssrv.ServidorWS();
 
 
 app.set('port', process.env.PORT || 5000); //directiva de express que define una variable interna (port) donde va a escuchar nuestra aplicación
@@ -49,12 +55,14 @@ app.get("/unirAPartida/:codigo/:nick", function(request, response){
 });
 
 //obtener lista de partidas
-app.get("/obtenerTodasPartidas", function(request, response){
+app.get("/obtenerListaPartidas", function(request, response){
     var res = juego.obtenerTodasPartidas(); //en res se guarda la lista de las partidas que devuelve el método de Juego
     response.send(res);   //hay que enviar siempre una respuesta
 });
 
-app.listen(app.get('port'), function(){    //lanzamos el servidor
+http.listen(app.get('port'), function(){    //lanzamos el servidor
     console.log("La app NodeJS se está ejecutando en el puerto ", app.get('port'));
 });
 
+//lanzar el servidorWS
+servidorWS.lanzarServidorWS(io, juego);
