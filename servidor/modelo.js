@@ -29,19 +29,22 @@ function Juego(){
     this.crearPartida = function(nick, numJug){
         //Crear codigo unico
         var codigo = "-1";
+        var partida;
         var jugador = this.usuarios[nick];
-        codigo = this.obtenerCodigo();
-      //hay una pequeña probabilidad de que el código no exista
-
-        while(this.partidas[codigo]){
+        if(numJug >= 2 && numJug <= 8){
             codigo = this.obtenerCodigo();
-        };
-            //si el código no existe se crea una partida con el código pasado por parámetro
-      
-      
-        var partida = new Partida(codigo,jugador,numJug);
-        this.partidas[codigo] = partida;
-        jugador = partida.propietario;       
+        //hay una pequeña probabilidad de que el código no exista
+
+            while(this.partidas[codigo]){
+                codigo = this.obtenerCodigo();
+            };
+                //si el código no existe se crea una partida con el código pasado por parámetro
+        
+        
+            partida = new Partida(codigo,jugador,numJug);
+            this.partidas[codigo] = partida;
+            jugador = partida.propietario;     
+        }  
 
 
         return partida;
@@ -99,7 +102,7 @@ function Jugador(nick, juego){
     this.juego = juego;
     this.mano=[];
     this.codigoPartida;
-    this.puntos;
+    this.puntos = 0;
 
     this.crearPartida = function(numJug){
         return this.juego.crearPartida(nick, numJug);
@@ -119,8 +122,10 @@ function Jugador(nick, juego){
 
     this.robar = function(num){
         var partida = this.obtenerPartida(this.codigoPartida);
-        var robadas = partida.dameCartas(num);
-        this.mano = this.mano.concat(robadas);
+        if(partida.turno.nick == this.nick){
+            var robadas = partida.dameCartas(num);
+            this.mano = this.mano.concat(robadas);
+        }
     }
 
     this.obtenerPartida = function(codigo){
@@ -136,7 +141,9 @@ function Jugador(nick, juego){
     this.jugarCarta = function(num){
         var partida = this.obtenerPartida(this.codigoPartida);
         var carta = this.mano[num];
-        partida.jugarCarta(carta, this.nick);
+        if(carta){
+            partida.jugarCarta(carta, this.nick);   
+        }
     }
 
 	this.quitarCarta=function(carta){
@@ -328,7 +335,7 @@ function Inicial(){
         if (partida.numeroJugadores() == partida.numJug){
             partida.fase = new Jugando();
             partida.turnoInicial();
-           // partida.cartaInicial();
+            partida.cartaInicial();
           /*  for (each in partida.jugadores){
                 each.manoInicial();
             }*/

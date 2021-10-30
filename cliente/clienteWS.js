@@ -24,7 +24,18 @@ function ClienteWS(){
     }
 
     this.manoInicial = function(){
-        this.socket.emit("manoInicial", nick);
+        this.socket.emit("manoInicial", this.nick);
+    }
+
+    this.jugarCarta = function(num){
+        this.socket.emit("jugarCarta", this.nick, num);
+    }
+
+    this.robar = function(num){
+        this.socket.emit("robar", this.nick, num);
+    }
+    this.pasarTurno = function(){
+        this.socket.emit("pasarTurno", this.nick);
     }
 
 //esperar contestación del servidor
@@ -46,6 +57,24 @@ function ClienteWS(){
             cli.manoInicial();
         });
         this.socket.on("mano", function(data){
+            console.log(data);
+            //cli.meToca();
+        });
+        this.socket.on("turno", function(data){
+            console.log(data);
+        });
+/*        this.socket.on("final", function(data){
+            console.log(data);
+            //if(cli.nick == ganador){ console.log("Ganador")}
+            //else console.log("Has perdido")
+        });
+        this.socket.on("carta", function(data){
+            console.log(data);
+        });
+        this.socket.on("cartasRobada", function(data){
+            console.log(data);
+        });*/
+        this.socket.on("fallo", function(data){
             console.log(data);
         });
     }

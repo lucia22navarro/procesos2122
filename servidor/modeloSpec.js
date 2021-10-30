@@ -137,6 +137,13 @@ describe("El juego del UNO...", function() {
       expect(partida.fase.nombre).toBe("jugando");
   
     });
+    it("Pepe roba una carta", function(){
+
+    });
+
+    it("Pepe pasa el turno", function(){
+
+    });
   
   });
   });
