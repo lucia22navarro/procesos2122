@@ -80,7 +80,7 @@ function ServidorWS(){
                 }
             });
 
-            socket.on("jugarCarta", function(num, nick){
+            socket.on("jugarCarta", function(nick, num){
                 var ju1 = juego.usuarios[nick];
                 if(ju1){
                     ju1.jugarCarta(num);
@@ -90,8 +90,7 @@ function ServidorWS(){
                     var nickTurno = partida.turno.nick;
                     cli.enviarATodos(io, codigo, "turno", {"turno":nickTurno," cartaActual":partida.cartaActual});
                     if(partida.fase.nombre == "final"){
-                        var ganador = nickTurno;
-                        cli.enviarATodos(io, codigo, "final", {"ganador":ganador, "cartaActual":partida.cartaActual});
+                        cli.enviarATodos(io, codigo, "final", {"ganador":nickTurno});
                     }
                 }
                 else{
@@ -104,7 +103,7 @@ function ServidorWS(){
                 var ju1 = juego.usuarios[nick];
                 if (ju1){
                     ju1.robar(num);
-                    cli.enviarAlRemitente(socket, "cartasRobadas", ju1.mano);
+                    cli.enviarAlRemitente(socket, "mano", ju1.mano);
                 }
                 else {
                     cli.enviarAlRemitente(socket, "fallo", "El usuario no existe");

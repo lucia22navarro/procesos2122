@@ -139,9 +139,9 @@ function Jugador(nick, juego){
     }
 
     this.jugarCarta = function(num){
-        var partida = this.obtenerPartida(this.codigoPartida);
         var carta = this.mano[num];
         if(carta){
+            var partida = this.obtenerPartida(this.codigoPartida);
             partida.jugarCarta(carta, this.nick);   
         }
     }
@@ -258,7 +258,7 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
     this.puedePasarTurno = function(nick){
         if(nick == this.turno.nick){
             var indice=this.ordenTurno.indexOf(this.turno.nick);            
-            var siguiente=(indice + sentido)%(Object.keys(this.jugadores).length);
+            var siguiente=(indice + this.sentido)%(Object.keys(this.jugadores).length);
             //cuando es sentido -1 puede salir un número negativo en el índice: el turno pasará al último del array
             if (siguiente < 0) {
                 siguiente = Object.keys(this.jugadores).length - 1;
@@ -289,13 +289,19 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
         this.cartaActual = carta;
     }
 
-    this.comprobarCarta = function(carta){
+  /*  this.comprobarCarta = function(carta){
         return (this.cartaActual.tipo=="numero" && (this.cartaActual.color==carta.color || this.cartaActual.valor==carta.valor)
         || this.cartaActual.tipo=="cambio" && (this.cartaActual.color==carta.color || this.cartaActual.tipo == carta.tipo)
         || this.cartaActual.tipo=="bloqueo" && (this.cartaActual.color==carta.color || this.cartaActual.tipo == carta.tipo)
         || this.cartaActual.tipo=="mas2" && (this.cartaActual.color==carta.color || this.cartaActual.tipo == carta.tipo)
         || this.carta.tipo=="comodin"  || this.carta.tipo=="comodin4")
 
+    }*/
+
+    this.comprobarCarta=function(carta){
+        //comprobar que la carta que se puede jugar la carta, según la que hay en la mesa
+        return (this.cartaActual.tipo=="numero" && (this.cartaActual.color==carta.color || this.cartaActual.valor==carta.valor)
+            || this.cartaActual.tipo=="cambio" && (this.cartaActual.color==carta.color || this.cartaActual.tipo == carta.tipo))
     }
 
     this.cambiarDireccion = function(){
