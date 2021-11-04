@@ -48,13 +48,20 @@ function ClienteWS(){
         this.socket.on("partidaCreada", function(data){
             console.log(data);
             cli.codigo = data.codigo;
+            //iu.mostrarControl(json con codigo y nick)
         });
         this.socket.on("unidoAPartida", function(data){
             console.log(data);
             cli.codigo = data.codigo;
         });
+        this.socket.on("nuevaPartida", function(lista){
+            if(!cli.codigo && cli.nick){
+                iu.mostrarListaPartidas(lista);
+            }
+        });
         this.socket.on("pedirCartas", function(data){
             cli.manoInicial();
+            console.log(data);
         });
         this.socket.on("mano", function(data){
             console.log(data);

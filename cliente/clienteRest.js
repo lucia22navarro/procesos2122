@@ -28,6 +28,7 @@ function ClienteRest(){
         $.getJSON("/obtenerListaPartidas/", function(data){
             //se ejecuta cuando conteste el servidor 
             console.log(data);
+            iu.mostrarListaPartidas();
         })
     }
 }

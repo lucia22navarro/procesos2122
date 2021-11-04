@@ -11,6 +11,12 @@ function ServidorWS(){
         io.sockets.in(codigo).emit(mensaje, datos); 
     }
 
+    //funcion para actualizar la lista automaticamente
+    this.enviarGlobal=function(socket,mens,datos){
+    	socket.broadcast.emit(mens,datos);
+    }
+
+
     //zona servidor del servidor WS
     this.lanzarServidorWS = function(io, juego){
         var cli = this;
@@ -27,6 +33,8 @@ function ServidorWS(){
                         res.codigo = ju1.codigoPartida;
                         socket.join(res.codigo);
                         cli.enviarAlRemitente(socket, "partidaCreada", res);
+                        var lista = juego.obtenerTodasPartidas();
+                        cli.enviarGlobal(socket, "nuevaPartida", lista);
                     }
                     else{ //si el número de jugadores no está entre 2 y 8
                         cli.enviarAlRemitente(socket, "fallo", "La partida no se ha creado");

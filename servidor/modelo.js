@@ -289,20 +289,20 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
         this.cartaActual = carta;
     }
 
-  /*  this.comprobarCarta = function(carta){
+    this.comprobarCarta = function(carta){
         return (this.cartaActual.tipo=="numero" && (this.cartaActual.color==carta.color || this.cartaActual.valor==carta.valor)
         || this.cartaActual.tipo=="cambio" && (this.cartaActual.color==carta.color || this.cartaActual.tipo == carta.tipo)
         || this.cartaActual.tipo=="bloqueo" && (this.cartaActual.color==carta.color || this.cartaActual.tipo == carta.tipo)
         || this.cartaActual.tipo=="mas2" && (this.cartaActual.color==carta.color || this.cartaActual.tipo == carta.tipo)
         || this.carta.tipo=="comodin"  || this.carta.tipo=="comodin4")
 
-    }*/
+    }
 
-    this.comprobarCarta=function(carta){
+   /* this.comprobarCarta=function(carta){
         //comprobar que la carta que se puede jugar la carta, según la que hay en la mesa
         return (this.cartaActual.tipo=="numero" && (this.cartaActual.color==carta.color || this.cartaActual.valor==carta.valor)
             || this.cartaActual.tipo=="cambio" && (this.cartaActual.color==carta.color || this.cartaActual.tipo == carta.tipo))
-    }
+    }*/
 
     this.cambiarDireccion = function(){
         if (this.sentido == 1) this.sentido = -1;
