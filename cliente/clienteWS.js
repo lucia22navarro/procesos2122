@@ -54,9 +54,10 @@ function ClienteWS(){
             console.log(data);
             cli.codigo = data.codigo;
         });
-        this.socket.on("nuevaPartida", function(lista){
+        this.socket.on("nuevaPartida", function(data){
             if(!cli.codigo && cli.nick){
-                iu.mostrarListaPartidas(lista);
+                console.log(data);
+                iu.mostrarUnirAPartida();
             }
         });
         this.socket.on("pedirCartas", function(data){
@@ -65,10 +66,11 @@ function ClienteWS(){
         });
         this.socket.on("mano", function(data){
             console.log(data);
-            //cli.meToca();
+            iu.mostrarMano(data);
         });
         this.socket.on("turno", function(data){
             console.log(data);
+            iu.mostrarCartaActual(data.cartaActual);
         });
 /*        this.socket.on("final", function(data){
             console.log(data);

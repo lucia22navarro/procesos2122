@@ -33,7 +33,7 @@ function ServidorWS(){
                         res.codigo = ju1.codigoPartida;
                         socket.join(res.codigo);
                         cli.enviarAlRemitente(socket, "partidaCreada", res);
-                        var lista = juego.obtenerTodasPartidas();
+                        var lista = juego.obtenerPartidasDisponibles();
                         cli.enviarGlobal(socket, "nuevaPartida", lista);
                     }
                     else{ //si el número de jugadores no está entre 2 y 8
@@ -57,9 +57,12 @@ function ServidorWS(){
                         socket.join(codigo);
                         console.log("Jugador " +nick + " se une a partida con codigo " +ju1.codigoPartida);
                         var partida = juego.partidas[codigo];
+                        var lista = juego.obtenerPartidasDisponibles();
                         cli.enviarAlRemitente(socket, "unidoAPartida", res);
                         if(partida.fase.nombre == "jugando"){
                             cli.enviarATodos(io, codigo, "pedirCartas", {});
+                            cli.enviarGlobal(socket, "nuevaPartida", lista);
+
                         }
                     }
                     else{

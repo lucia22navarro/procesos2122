@@ -60,6 +60,13 @@ app.get("/obtenerListaPartidas", function(request, response){
     response.send(res);   //hay que enviar siempre una respuesta
 });
 
+app.get("/obtenerPartidasDisponibles", function(request, response){
+    if(juego){
+        var res = juego.obtenerPartidasDisponibles();
+        response.send(res);
+    }
+})
+
 http.listen(app.get('port'), function(){    //lanzamos el servidor
     console.log("La app NodeJS se está ejecutando en el puerto ", app.get('port'));
 });

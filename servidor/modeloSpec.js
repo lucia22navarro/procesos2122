@@ -110,6 +110,7 @@ describe("El juego del UNO...", function() {
       expect(juego.numeroPartidas()).toEqual(1);
       expect(partida.numeroJugadores()).toEqual(2);
       expect(partida.fase.nombre).toBe("jugando");
+      expect(juego.obtenerPartidasDisponibles().toEqual(0));
     });
   
     

@@ -3,10 +3,17 @@ function ClienteRest(){
         $.getJSON("/agregarJugador/" + nick, function(data){
             //se ejecuta cuando conteste el servidor 
             console.log(data);
-        })
+            if(data.nick !=-1){
+                ws.nick = data.nick;
+               // iu.mostrarAgregarJugador(data);
+                iu.mostrarControl(ws.nick);
+                cli.obtenerListaPartidas();
 
-        //el servidor sigue la ejecución sin esperar respuesta
-        //mostrar una ruleta
+            } else{
+                iu.mostrarModal("El nick " + nick + " está en uso");
+                iu.mostrarAgregarJugador();
+            }
+        })
     }
 
     //crear partida
@@ -14,6 +21,8 @@ function ClienteRest(){
         $.getJSON("/crearPartida/" + nick + "/" + numJug, function(data){
             //se ejecuta cuando conteste el servidor 
             console.log(data);
+            ws.codigo = data.codigo;
+            iu.mostrarEsperando(ws.codigo)
         })
     }
     //unir a partida
@@ -28,7 +37,14 @@ function ClienteRest(){
         $.getJSON("/obtenerListaPartidas/", function(data){
             //se ejecuta cuando conteste el servidor 
             console.log(data);
-            iu.mostrarListaPartidas();
+            //iu.mostrarListaPartidas();
+        })
+    }
+
+    this.obtenerPartidasDisponibles = function(){
+        $.getJSON("/obtenerPartidasDisponibles", function(data){
+            console.log(data);
+            iu.mostrarUnirAPartida(data);
         })
     }
 }
