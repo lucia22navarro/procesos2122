@@ -29,18 +29,13 @@ function ControlWeb(){
 
 
     this.mostrarControl = function(nick){
-        var cadena =        '<div class="container bg-text">'
-        cadena = cadena +       '<div class="row">'
-        cadena = cadena +           '<label>'
-        cadena = cadena +               '<h4>Nick: '+ nick +'</h4></label></div>'
-        cadena = cadena +       '<div class="row">'
-        cadena = cadena +           '<div class="col">'
-        cadena = cadena +               '<div id="crearPartida"></div></div>'
-        cadena = cadena +           '<div class="col">'
-        cadena = cadena +               '<div id="listaPartidas"></div></div></div></div>'
+        var cadena =          '<label>'
+        cadena = cadena +        '<h4>Nick: '+ nick +'</h4></label></div>'
+
         $("#opciones").append(cadena);
         iu.mostrarCrearPartida(nick);
-        iu.mostrarUnirAPartida();
+        rest.obtenerListaPartidas();
+        //iu.mostrarUnirAPartida();
 
     }
 
@@ -48,7 +43,7 @@ function ControlWeb(){
     this.mostrarCrearPartida = function(nick){
        var cadena =         '<div id="mCP">'
        cadena = cadena +        '<label>Crear una nueva partida</label><br>'
-       cadena = cadena +        '<label for="numj">Selecciona numero de jugadores:</label>'
+       cadena = cadena +        '<label for="numj">Selecciona número de jugadores:</label>'
        cadena = cadena +        '<select class="form-control" id="numj">'
        cadena = cadena +            '<option>2</option>'
        cadena = cadena +            '<option>3</option>'
@@ -59,8 +54,7 @@ function ControlWeb(){
        cadena = cadena +            '<option>8</option></select>'
        cadena = cadena +        '<button type="button" id="btnCP" class="btn btn-primary">Crear</button>'
        cadena = cadena +    '</div>' //cerrar mCP
-         
- 
+    
        $("#crearPartida").append(cadena);
         $("#btnCP").on("click", function(){
             var numJug = $('#numj').val();
@@ -73,36 +67,43 @@ function ControlWeb(){
     }
 
     this.mostrarEsperando = function(codigo){
-        var cadena =        '<div id="esperando">'
+        var cadena =        '<div id="espera">'
         cadena = cadena +       '<div class="row">'
         cadena = cadena +           '<div class="col">'
         cadena = cadena +               '<label>Codigo: '+ codigo + '</label></div>'
         cadena = cadena +           '<div class="col">'
         cadena = cadena +               '<div class="spinner-grow text-primary"></div></div>'
         cadena = cadena +           '<div class="col">'
-        cadena = cadena +               '<div id="listanicks">Jugadores</div></div></div></div>'
-
-        $("#crearPartida").append(cadena);
+        cadena = cadena +               '<div id="listanicks">Jugadores</div></div>'
+      /*  var partida = juego.partidas[codigo];
+        var lista = partida.jugadores;
+        for (i = 0; i < lista.length; i++){
+            cadena = cadena +        '<label for="jug">'+ lista[i].nick +'</label><br>'
+        }*/
+        cadena = cadena + '</div></div>'
+        $("#esperando").append(cadena);
         // mostrar los jugadores que se van uniendo
         //enviarGlobal(servidorWS)
     }
 
     this.mostrarUnirAPartida = function(lista){
-        $('#mLP').remove();
+        $('#mUAP').remove();
         var cadena =         '<div id="mUAP">'
-        cadena = cadena +        '<label>Lista de partidas publicas</label><br>'
-        //lista = rest.obtenerListaPartidas();
-
-        cadena = cadena + '<div class="list-group" id="mLP>'
+        cadena = cadena +        '<label>Lista de partidas públicas</label><br>'
+        cadena = cadena +        '<ul class="list-group list-group-flush" id="mLP>'
         for (i = 0; i < lista.length; i++){
             var codigo = lista[i].codigo;
-            cadena = cadena + '<a href="#" class="list-group-item list-group-item-action" value="'+ codigo+'">'+ codigo +'</a>'
+            var propietario = lista[i].propietario
+        //    cadena = cadena +       '<li class="list-group-item">'
+            cadena = cadena +           '<a href="#" class="list-group-item" value="'+ codigo+'">'+ codigo +'</a>'
+        //    cadena = cadena +           '<label>'+ propietario +'</label>'
+        //    cadena = cadena +           '<span class="badge badge-primary badge-pill">'+ partida.numeroJugadores()+ '/'+ partida.numJug + '</span>'
+        //    cadena = cadena +       '</li>'
         }
-        cadena = cadena + '</div>'
-        cadena = cadena +    '</div>' //cerrar mCP
+        cadena = cadena +        '</div>'
+        cadena = cadena +    '</div>' //cerrar mUAP
 
         $("#listaPartidas").append(cadena);
-
         $(".list-group a").click(function(){
             codigo =$(this).attr("value");
             var nick = ws.nick;
@@ -113,26 +114,16 @@ function ControlWeb(){
                 ws.unirAPartida(codigo, nick);
             }
         });
-
-/*
-        $("#listaPartidas").append(cadena);
-         $("#btnUAP").on("click", function(){
-             var codigo = $('#cod').val();
-             $("#mUAP").remove();
-             rest.unirAPartida(codigo, nick);
-            // var codigo = partida.codigo;
-            // $("#crearPartida").append('<div id="mCP"><label for="numj">Nick:</label>');
-         })*/
      }
-
+/*
      this.mostrarListaPartidas = function(lista){
         var cadena =  '<div id="mLP"><label for="numj">Partidas disponibles:</label>';
         cadena = cadena + '<input type="text" class="form-control" id="numj">'
         cadena = cadena + '</div>';
 
         var rest = new ClienteRest();
-        rest.obtenerListaPartidas();
- /*
+
+        
         $("#crearPartida").append(cadena);
          $("#btnAJ").on("click", function(){
              var numJug = $('#numj').val();
@@ -141,8 +132,9 @@ function ControlWeb(){
             // var codigo = partida.codigo;
             // $("#crearPartida").append('<div id="mCP"><label for="numj">Nick:</label>');
          })
- */
+ 
      }
+     */
 
      this.mostrarModal = function(msg){
          $('#cM').remove();

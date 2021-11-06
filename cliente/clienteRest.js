@@ -7,7 +7,7 @@ function ClienteRest(){
                 ws.nick = data.nick;
                // iu.mostrarAgregarJugador(data);
                 iu.mostrarControl(ws.nick);
-                cli.obtenerListaPartidas();
+              //  cli.obtenerListaPartidas();
 
             } else{
                 iu.mostrarModal("El nick " + nick + " está en uso");
@@ -37,7 +37,7 @@ function ClienteRest(){
         $.getJSON("/obtenerListaPartidas/", function(data){
             //se ejecuta cuando conteste el servidor 
             console.log(data);
-            //iu.mostrarListaPartidas();
+            iu.mostrarUnirAPartida(data);
         })
     }
 

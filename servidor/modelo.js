@@ -63,10 +63,12 @@ function Juego(){
     this.obtenerPartidasDisponibles = function(){
         var lista = [];
         for(each in this.partidas){
+            var partida = this.partidas[each];
             if(partida.fase.nombre == "inicial"){
-                var partida = this.partidas[each];
                 var huecos = partida.numJug - partida.numeroJugadores();
+                if (partida.numeroJugadores() < partida.numJug){
                 lista.push({"propietario":partida.propietario, "codigo":each, "huecos":huecos});
+                }
             }
         }
         return lista;
@@ -427,7 +429,7 @@ function Numero(valor, color){
     this.tipo = "numero";
     this.color = color;
     this.valor = valor;
-    this.nombre="numero"+valor;
+    this.nombre=color+valor;
     this.comprobarEfecto=function(partida){
 		console.log("No hay efectos");
 	}
@@ -436,8 +438,8 @@ function Numero(valor, color){
 function Cambio(valor, color){
     this.tipo="cambio";
     this.color = color;
-    this.nombre="cambio"+color;
     this.valor=valor;  
+    this.nombre="cambio"+color;
 	this.comprobarEfecto=function(partida){
 		partida.cambiarDireccion();
 	}
@@ -445,9 +447,9 @@ function Cambio(valor, color){
 
 function Bloqueo(valor, color){
     this.tipo="bloqueo";
-    this.nombre="bloqueo"+color;
     this.color = color;
-    this.valor=valor;  
+    this.valor=valor;
+    this.nombre="bloqueo"+color;  
 	this.comprobarEfecto=function(partida){
         partida.pasarTurno(partida.turno.nick);
 	}	
@@ -455,27 +457,27 @@ function Bloqueo(valor, color){
 
 function Mas2(valor, color){
     this.tipo="mas2";
-    this.nombre="mas2"+color;
     this.color = color;
     this.valor=valor; 
+    this.nombre="mas2"+color;
 	this.comprobarEfecto=function(partida){
 	}	
 }
 
 function Comodin(valor){
     this.tipo = "comodin";
-    this.nombre="comodin";
     this.color="";
     this.valor=valor;
+    this.nombre="comodin";
     this.comprobarEfecto=function(partida){
 }
 }
 
 function Comodin4(valor){
     this.tipo = "comodin4";
-    this.nombre="comodin4";
     this.color ="";
     this.valor=valor;
+    this.nombre="comodin4";
     this.comprobarEfecto=function(partida){
 }
 }

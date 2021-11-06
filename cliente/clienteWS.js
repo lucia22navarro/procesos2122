@@ -53,11 +53,13 @@ function ClienteWS(){
         this.socket.on("unidoAPartida", function(data){
             console.log(data);
             cli.codigo = data.codigo;
+           // iu.mostrarEsperando()
+           
         });
         this.socket.on("nuevaPartida", function(data){
             if(!cli.codigo && cli.nick){
                 console.log(data);
-                iu.mostrarUnirAPartida();
+                iu.mostrarUnirAPartida(data);
             }
         });
         this.socket.on("pedirCartas", function(data){
@@ -74,15 +76,16 @@ function ClienteWS(){
         });
 /*        this.socket.on("final", function(data){
             console.log(data);
-            //if(cli.nick == ganador){ console.log("Ganador")}
-            //else console.log("Has perdido")
+            if(cli.nick == ganador){ console.log("Ganador")}
+            else console.log("Has perdido")
         });
         this.socket.on("carta", function(data){
             console.log(data);
         });
         this.socket.on("cartasRobada", function(data){
             console.log(data);
-        });*/
+        });
+*/
         this.socket.on("fallo", function(data){
             console.log(data);
         });
