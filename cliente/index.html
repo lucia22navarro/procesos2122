@@ -7,6 +7,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
        <script src="/cliente/clienteRest.js"></script>
        <script src="/cliente/clienteWS.js"></script>
        <script src="/cliente/controlWeb.js"></script>
@@ -27,6 +28,7 @@
             <div class="row">
                 <div class="col p-5 text-center">
                     <div id="opciones"></div>
+                    <div id="botones"></div>
                 </div>
             </div>
              <div class="row">
@@ -81,7 +83,7 @@
             ws = new ClienteWS();
             iu = new ControlWeb();
             iu.mostrarAgregarJugador();
-           // iu.mostrarControl();
+            //iu.comprobarUsuario();
         </script>
     </body>
 </html>

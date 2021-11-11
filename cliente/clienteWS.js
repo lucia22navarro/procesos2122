@@ -13,9 +13,10 @@ function ClienteWS(){
         this.servidorWSCliente(); //cuando lanzamos el cliente también hay que lanzar la parte servidora del cliente (local)
     }
 
-    this.crearPartida = function(num, nick){
+    this.crearPartida = function(nick,num){
         this.nick = nick;
         this.socket.emit("crearPartida", num, nick);
+
     }
 
     this.unirAPartida = function(codigo, nick){
@@ -37,6 +38,10 @@ function ClienteWS(){
     this.pasarTurno = function(){
         this.socket.emit("pasarTurno", this.nick);
     }
+    this.uno = function(){
+        this.socket.emit("uno", this.nick);
+    }
+
 
 //esperar contestación del servidor
     this.servidorWSCliente = function(){
@@ -48,6 +53,9 @@ function ClienteWS(){
         this.socket.on("partidaCreada", function(data){
             console.log(data);
             cli.codigo = data.codigo;
+           // ws.codigo = data.codigo;
+            //iu.mostrarUnirAPartida();
+            iu.mostrarEsperando(data.codigo)
             //iu.mostrarControl(json con codigo y nick)
         });
         this.socket.on("unidoAPartida", function(data){
@@ -62,23 +70,50 @@ function ClienteWS(){
                 iu.mostrarUnirAPartida(data);
             }
         });
+        this.socket.on("borrarMenu", function(data){
+            console.log(data);
+            iu.borrarMenu();
+        })
         this.socket.on("pedirCartas", function(data){
             cli.manoInicial();
-            console.log(data);
+            console.log(data + 'mano inicial');
         });
         this.socket.on("mano", function(data){
             console.log(data);
+            codigo = cli.codigo;
+            iu.mostrarOpcionesJuego(codigo);
             iu.mostrarMano(data);
+            if (data.length == 1){
+                iu.activarUno();
+            }
+            
         });
         this.socket.on("turno", function(data){
             console.log(data);
+           // iu.mostrarOpcionesJuego(data.turno)
+
+            if(cli.nick == data.turno){
+                iu.turno();
+            }
             iu.mostrarCartaActual(data.cartaActual);
         });
-/*        this.socket.on("final", function(data){
+        this.socket.on("uno", function(data){
             console.log(data);
-            if(cli.nick == ganador){ console.log("Ganador")}
-            else console.log("Has perdido")
+            console.log("Jugador " + data.nick + " le queda 1 carta!!")
+           // iu.mostrarOpcionesJuego(data.turno)
+            iu.mostrarCartaActual(data.cartaActual);
         });
+        this.socket.on("final", function(data){
+            console.log(data);
+            if(cli.nick == data.ganador){ 
+                //console.log("Ganador")
+                iu.mostrarGanador();
+            }
+            else 
+                //console.log("Has perdido")
+                iu.mostrarPerdedor();
+        });
+        /*
         this.socket.on("carta", function(data){
             console.log(data);
         });

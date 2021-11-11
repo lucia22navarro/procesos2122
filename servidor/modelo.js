@@ -66,9 +66,9 @@ function Juego(){
             var partida = this.partidas[each];
             if(partida.fase.nombre == "inicial"){
                 var huecos = partida.numJug - partida.numeroJugadores();
-                if (partida.numeroJugadores() < partida.numJug){
+             //   if (partida.numeroJugadores() < partida.numJug){
                 lista.push({"propietario":partida.propietario, "codigo":each, "huecos":huecos});
-                }
+             //   }
             }
         }
         return lista;
@@ -136,11 +136,19 @@ function Jugador(nick, juego){
     }
 
     this.robar = function(num){
+        var numRobadas = -1;
         var partida = this.obtenerPartida(this.codigoPartida);
         if(partida.turno.nick == this.nick){
             var robadas = partida.dameCartas(num);
-            this.mano = this.mano.concat(robadas);
+            if (robadas.length <= 0) {
+                partida.pasarTurno(); //pasar turno sin robar ninguna carta
+                numRobadas = 0;
+            }
+            else
+                this.mano = this.mano.concat(robadas);
+                numRobadas = robadas.length;
         }
+        return numRobadas;
     }
 
     this.obtenerPartida = function(codigo){
@@ -230,10 +238,16 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
 
     this.dameCartas = function(num){
         var cartas = [];
-        
+        if(this.mazo.length < num){
+            this.mazo = this.mazo.concat(this.mesa);
+            this.mesa = [];
+
+        }
         for (i = 0; i < num; i++){
             var carta = this.asignarUnaCarta();
-            cartas.push(carta);
+            if(carta){
+                cartas.push(carta);
+            }
         }
         return cartas;
     }

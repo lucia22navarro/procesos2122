@@ -138,13 +138,35 @@ describe("El juego del UNO...", function() {
       expect(partida.fase.nombre).toBe("jugando");
   
     });
-    it("Pepe roba una carta", function(){
-
+    it("Ana roba una carta", function(){
+      var ju1 = juego.usuarios["ana"];
+      expect(ju1.mano.length).toBe(0);
+      ju1.robar(1);
+      expect(ju1.mano.length).toBe(1);
     });
-
-    it("Pepe pasa el turno", function(){
-
+    it("Ana intenta robar una carta pero no quedan cartas en el mazo", function(){
+      var ju1=juego.usuarios["ana"];
+      expect(partida.mazo.length).toBe(108);
+      partida.mesa = partida.mesa.concat(partida.mazo);
+      partida.mazo=[];
+      expect(partida.mesa.length).toBe(108);
+      ju1.robar(1);
+      expect(ju1.mano.length).toBe(8);
+      expect(partida.mazo.length).toBe(107);
     });
+    it("Ana roba todas las cartas del mazo y pierde el turno", function(){
+      expect(partida.mazo.length).toBe(108);
+      expect(ju1.mano.length).toBe(0);
+      ju1.robar(108);
+      expect(ju1.mano.length).toBe(108);
+      expect(partida.turno.nick).toBe(ju1.nick);
+      ju1.robar(1);
+      expect(partida.turno.nick).toBe(ju2.nick);
+    })
+
+    //it("Pepe pasa el turno", function(){
+
+//    });
   
   });
   });

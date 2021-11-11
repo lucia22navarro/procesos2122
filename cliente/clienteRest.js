@@ -5,9 +5,8 @@ function ClienteRest(){
             console.log(data);
             if(data.nick !=-1){
                 ws.nick = data.nick;
-               // iu.mostrarAgregarJugador(data);
+               // $.cookie("nick", data.nick);
                 iu.mostrarControl(ws.nick);
-              //  cli.obtenerListaPartidas();
 
             } else{
                 iu.mostrarModal("El nick " + nick + " está en uso");
@@ -21,8 +20,9 @@ function ClienteRest(){
         $.getJSON("/crearPartida/" + nick + "/" + numJug, function(data){
             //se ejecuta cuando conteste el servidor 
             console.log(data);
-            ws.codigo = data.codigo;
-            iu.mostrarEsperando(ws.codigo)
+           // cli.codigo = data.codigo;
+           // ws.codigo = data.codigo;
+           // iu.mostrarEsperando(cli.codigo)
         })
     }
     //unir a partida
