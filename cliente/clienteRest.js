@@ -5,7 +5,7 @@ function ClienteRest(){
             console.log(data);
             if(data.nick !=-1){
                 ws.nick = data.nick;
-               // $.cookie("nick", data.nick);
+                $.cookie("nick", data.nick);
                 iu.mostrarControl(ws.nick);
 
             } else{

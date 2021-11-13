@@ -11,6 +11,9 @@ function ServidorWS(){
         io.sockets.in(codigo).emit(mensaje, datos); 
     }
 
+    this.enviarATodosMenosRemitente=function(socket, nombre, mensaje, datos){
+        socket.broadcast.to(nombre).emit(mensaje, datos); 
+    }
     //funcion para actualizar la lista automaticamente
     this.enviarGlobal=function(socket,mens,datos){
     	socket.broadcast.emit(mens,datos);
@@ -151,6 +154,29 @@ function ServidorWS(){
                 else {
                     cli.enviarAlRemitente(socket, "fallo", "El usuario no existe");
                 }
+            });
+            socket.on("abandonarPartida", function(nick){
+                var ju1 = juego.usuarios[nick];
+                if (ju1){
+                    ju1.abandonarPartida();
+                    var codigo = ju1.codigoPartida;
+                    cli.enviarATodos(io, codigo, "jugadorAbandona", {"jugador":nick});
+
+                }
+            });
+            socket.on("cerrarSesion", function(nick){
+                var ju1 = juego.usuarios[nick];
+                if (ju1){
+                    var codigo = ju1.codigoPartida;
+                    var partida = juego.partidas[codigo];
+                    if(partida){
+                        ju1.abandonarPartida();
+                        cli.enviarATodosMenosRemitente(socket, cli.nick, codigo, "jugadorAbandona", {});
+                    }
+                    ju1.cerrarSesion();
+                    cli.enviarAlRemitente(socket, "usuarioEliminado", {});
+
+                }  
             });
 
         }) 

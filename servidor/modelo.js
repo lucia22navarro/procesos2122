@@ -101,10 +101,14 @@ function Juego(){
 
     //método auxiliar para saber cuántas partidas tenemos en el juego
 
-    this.numeroPartidas=function(){
+    this.numeroPartidas = function(){
         //coge los códigos (las claves) de las partidas y devuelve la longitud de este array
 		return Object.keys(this.partidas).length;
 	}
+
+    this.borrarUsuario = function(nick){
+        delete this.usuarios[nick];
+    }
 
 }
 
@@ -176,6 +180,16 @@ function Jugador(nick, juego){
             var partida=this.obtenerPartida(this.codigoPartida);
             partida.finPartida();
         }
+    }
+
+    this.abandonarPartida = function(){
+        var partida = this.obtenerPartida(this.codigoPartida);
+        if(partida){
+            partida.fase = new Final();
+        }
+    }
+    this.cerrarSesion = function(){
+        this.juego.borrarUsuario(this.nick);
     }
 }
 

@@ -1,6 +1,6 @@
 function ControlWeb(){
     
-/*    this.comprobarUsuario = function(){
+    this.comprobarUsuario = function(){
         if($.cookie("nick")){
             ws.nick=$.cookie("nick");
             iu.mostrarControl(ws.nick)
@@ -9,7 +9,7 @@ function ControlWeb(){
         else {
             iu.mostrarAgregarJugador();
         }
-    }*/
+    }
     
 
     this.mostrarAgregarJugador = function(){
@@ -46,12 +46,33 @@ function ControlWeb(){
         var cadena =        '<div id="op">'
         cadena = cadena +     '<label>'
         cadena = cadena +        '<h4>Nick: '+ nick +'</h4></label></div>'
+        cadena = cadena +        '<button type="button" id="btnAbandonar" class="btn btn-primary">Abandonar</button>'
+        cadena = cadena +        '<button type="button" id="btnCerrar" class="btn btn-primary">Cerrar</button>'
+
         cadena = cadena +     '</div>'
 
         $("#opciones").append(cadena);
         iu.mostrarCrearPartida(nick);
         rest.obtenerPartidasDisponibles();
         //iu.mostrarUnirAPartida();
+
+        $("#btnAbandonar").on("click", function(){
+           // iu.borrarMenu();
+            //ws.nick="";
+          //  ws.codigo="";
+            //avisar al resto
+            ws.abandonarPartida();
+
+          //  iu.mostrarControl(nick);
+        });
+
+        $("#btnCerrar").on("click", function(){
+            //iu.borrarMenu();
+            //ws.nick="";
+            //iu.mostrarAgregarJugador();
+            ws.cerrarSesion();
+
+        })
 
     }
 
@@ -69,7 +90,6 @@ function ControlWeb(){
        cadena = cadena +            '<option>7</option>'
        cadena = cadena +            '<option>8</option></select>'
        cadena = cadena +        '<button type="button" id="btnCP" class="btn btn-primary">Crear</button>&nbsp;&nbsp;'
-       cadena = cadena +        '<button type="button" id="salirjuego" class="btn btn-primary">Salir</button>'
        cadena = cadena +    '</div>' //cerrar mCP
     
        $("#crearPartida").append(cadena);
@@ -83,18 +103,19 @@ function ControlWeb(){
             //iu.mostrarEsperando();
             
         })
-        $("#salirjuego").on("click", function(){
-            iu.borrarMenu();
-            ws.nick="";
-            $("#crearPartida").remove();
-            $("#botones").remove();
-            iu.mostrarAgregarJugador();
-        })
+
 
     }
     this.borrarMenu = function(){
+        $("#mAJ").remove();
+        $("#op").remove();
         $("#espera").remove();
         $("#mUAP").remove();
+        $('#mCP').remove();
+        $("#botones").remove();
+        $("#bot").remove();
+        $('#mM').remove();
+        $('#mCA').remove();
     }
 
 

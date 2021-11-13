@@ -168,6 +168,9 @@ describe("El juego del UNO...", function() {
 
 //    });
   
+    it("Ana abandona la partida", function(){
+      expect
+    })
   });
-  });
+});
   

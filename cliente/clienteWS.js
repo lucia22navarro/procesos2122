@@ -41,6 +41,12 @@ function ClienteWS(){
     this.uno = function(){
         this.socket.emit("uno", this.nick);
     }
+    this.abandonarPartida = function(){
+        this.socket.emit("abandonarPartida", this.nick);
+    }
+    this.cerrarSesion = function(){
+        this.socket.emit("cerrarSesion", this.nick);
+    }
 
 
 //esperar contestación del servidor
@@ -124,6 +130,19 @@ function ClienteWS(){
         this.socket.on("fallo", function(data){
             console.log(data);
         });
+        this.socket.on("jugadorAbandona", function(){
+            iu.mostrarModal("Un jugador abandona la partida.");
+            iu.borrarMenu();
+            iu.mostrarControl(cli.nick);
+
+        });
+        this.socket.on("usuarioEliminado", function(){
+            cli.nick = "";
+            cli.codigo = "";
+            $.removeCookie("nick");
+            iu.borrarMenu();
+            iu.mostrarAgregarJugador();
+        })
     }
 
     this.conectar();
