@@ -86,8 +86,9 @@ function ClienteWS(){
         });
         this.socket.on("mano", function(data){
             console.log(data);
-            codigo = cli.codigo;
-            iu.mostrarOpcionesJuego(codigo);
+            cli.codigo = cli.codigo;
+           // iu.mostrarOpcionesJuego(codigo);
+            iu.mostrarOpcionesJuego();
             iu.mostrarMano(data);
             if (data.length == 1){
                 iu.activarUno();
@@ -96,7 +97,6 @@ function ClienteWS(){
         });
         this.socket.on("turno", function(data){
             console.log(data);
-           // iu.mostrarOpcionesJuego(data.turno)
 
             if(cli.nick == data.turno){
                 iu.turno();
@@ -107,17 +107,15 @@ function ClienteWS(){
             console.log(data);
             console.log("Jugador " + data.nick + " le queda 1 carta!!")
            // iu.mostrarOpcionesJuego(data.turno)
-            iu.mostrarCartaActual(data.cartaActual);
         });
         this.socket.on("final", function(data){
             console.log(data);
             if(cli.nick == data.ganador){ 
-                //console.log("Ganador")
-                iu.mostrarGanador();
+                iu.mostrarModal("¡ENHORABUENA! ERES EL GANADOR");
             }
             else 
-                //console.log("Has perdido")
-                iu.mostrarPerdedor();
+            iu.mostrarModal("HAS PERDIDO LA PARTIDA");
+
         });
         /*
         this.socket.on("carta", function(data){

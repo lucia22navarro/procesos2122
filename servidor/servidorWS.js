@@ -147,9 +147,7 @@ function ServidorWS(){
                 var ju1 = juego.usuarios[nick];
                 if (ju1){
                     var codigo = ju1.codigoPartida;
-                    var partida = juego.partidas[codigo];
-                   // var nickTurno = partida.turno.nick;
-                    cli.enviarATodos(io, codigo, "uno", {"jugador":nick," cartaActual":partida.cartaActual});
+                    cli.enviarATodos(io, codigo, "uno", {});
                 }
                 else {
                     cli.enviarAlRemitente(socket, "fallo", "El usuario no existe");
@@ -160,7 +158,7 @@ function ServidorWS(){
                 if (ju1){
                     ju1.abandonarPartida();
                     var codigo = ju1.codigoPartida;
-                    cli.enviarATodos(io, codigo, "jugadorAbandona", {"jugador":nick});
+                    cli.enviarATodosMenosRemitente(socket, cli.nick, codigo, "jugadorAbandona", {});
 
                 }
             });
@@ -169,10 +167,10 @@ function ServidorWS(){
                 if (ju1){
                     var codigo = ju1.codigoPartida;
                     var partida = juego.partidas[codigo];
-                    if(partida){
+                   // if(partida){ //si está en una partida, avisa al resto de jugadores de que abandona
                         ju1.abandonarPartida();
                         cli.enviarATodosMenosRemitente(socket, cli.nick, codigo, "jugadorAbandona", {});
-                    }
+                   // }
                     ju1.cerrarSesion();
                     cli.enviarAlRemitente(socket, "usuarioEliminado", {});
 

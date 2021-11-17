@@ -337,8 +337,8 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
         || this.cartaActual.tipo=="cambio" && (this.cartaActual.color==carta.color || this.cartaActual.tipo == carta.tipo)
         || this.cartaActual.tipo=="bloqueo" && (this.cartaActual.color==carta.color || this.cartaActual.tipo == carta.tipo)
         || this.cartaActual.tipo=="mas2" && (this.cartaActual.color==carta.color || this.cartaActual.tipo == carta.tipo)
-        || this.carta.tipo=="comodin"  || this.carta.tipo=="comodin4")
-
+        //|| this.carta.tipo=="comodin"  || this.carta.tipo=="comodin4")
+        )
     }
 
    /* this.comprobarCarta=function(carta){

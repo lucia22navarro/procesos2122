@@ -1,6 +1,7 @@
 <html>
     <head>
        <title>La app del Uno</title> 
+       <link rel="shortcut icon" type="image/ico" href="favicon.ico"/>
        <meta charset="utf-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -28,7 +29,9 @@
             <div class="row">
                 <div class="col p-5 text-center">
                     <div id="opciones"></div>
-                    <div id="botones"></div>
+                    <div class="row">
+                        <div id="botones"></div>
+                    </div>
                 </div>
             </div>
              <div class="row">
@@ -46,6 +49,7 @@
             <div class="row">
                 <div id="rivales"></div>
             </div>
+
             <div class="row">
                 <div id="actual"></div>
             </div>
@@ -82,7 +86,6 @@
             var rest = new ClienteRest();
             ws = new ClienteWS();
             iu = new ControlWeb();
-            //iu.mostrarAgregarJugador();
             iu.comprobarUsuario();
         </script>
     </body>
