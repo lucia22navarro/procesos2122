@@ -3,13 +3,17 @@ function randomInt(low, high){
     return Math.floor(Math.random()*(high - low) + low);
 }
 
+//importar la clase para almacenar datos
+var cad = require("./cad.js")
+
+
 /* JUEGO */
 
 function Juego(){
 
     this.usuarios={}; //[]. Solo permite que exista un nick único
     this.partidas={};
-
+    this.cad = new cad.CAD();
 
     this.agregarJugador = function(nick){
         var res = {nick : -1};
@@ -110,6 +114,20 @@ function Juego(){
         delete this.usuarios[nick];
     }
 
+
+    this.obtenerTodosResultados = function(callback){
+        this.cad.encontrarTodosResultados(function(lista){
+            callback(lista);
+        });
+    }
+
+    this.insertarResultado = function(resultado){
+        this.cad.insertarResultado(resultado, function(res){
+            console.log(res);
+        });
+    }
+
+    this.cad.conectar(function(){});
 }
 
 
@@ -188,8 +206,18 @@ function Jugador(nick, juego){
             partida.fase = new Final();
         }
     }
+
     this.cerrarSesion = function(){
         this.juego.borrarUsuario(this.nick);
+    }
+
+    this.obtenerResultados = function(criterio, callback){
+        this.cad.encontrarResultadoCriterio(criterio, callback);
+    }
+
+    this.insertarResultado = function(prop, numJug){
+        var resultado = new Resultado(prop, this.nick,this.puntos, numJug);
+        this.juego.insertarResultado(resultado);
     }
 }
 
@@ -211,7 +239,6 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
     this.cartaActual;
     this.fase = new Inicial();
 
-    //métodos para que un jugador se pueda unir a una partida (dependiendo de la fase en la que se encuentre la partida)
     this.unirAPartida = function(jugador){
         this.fase.unirAPartida(this, jugador);
     }
@@ -224,7 +251,6 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
     }
 
     this.numeroJugadores=function(){
-        //coge los nicks (las claves) de los jugadores y devuelve la longitud de este array
 		return Object.keys(this.jugadores).length;
 	}
 
@@ -266,7 +292,6 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
         return cartas;
     }
 
-    //método auxiliar para asignar cartas de una en una
     this.asignarUnaCarta = function(){
         var maxCartas = this.mazo.length;
         var res;
@@ -278,23 +303,16 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
         return res;
     }
 
-    //método que lanza la carta inicial a la mesa cuando comienza la partida (se utiliza en la clase "Inicial")
-
     this.cartaInicial = function(){
         this.cartaActual = this.asignarUnaCarta();
     }
 
-    //método que asigna el turno inicial cuando se crea la partida
-    //por defecto será el creador de la partida
     this.turnoInicial = function(){
         var nick = this.ordenTurno[0];
         this.turno = this.jugadores[nick];
     }
 
-    //método para pasar de turno. dependerá del sentido en el que se encuentre la partida
-
     this.pasarTurno = function(nick){
-        //delegar en la fase si puede pasar turno o no
         this.fase.pasarTurno(nick,this);
     }
 
@@ -341,12 +359,6 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
         )
     }
 
-   /* this.comprobarCarta=function(carta){
-        //comprobar que la carta que se puede jugar la carta, según la que hay en la mesa
-        return (this.cartaActual.tipo=="numero" && (this.cartaActual.color==carta.color || this.cartaActual.valor==carta.valor)
-            || this.cartaActual.tipo=="cambio" && (this.cartaActual.color==carta.color || this.cartaActual.tipo == carta.tipo))
-    }*/
-
     this.cambiarDireccion = function(){
         if (this.sentido == 1) this.sentido = -1;
         if (this.sentido == -1) this.sentido = 1;
@@ -355,6 +367,7 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
     this.finPartida = function(){
         this.fase = new Final();
         this.calcularPuntos();
+        this.turno.insertarResultado(this.propietario, this.numJug);
     }
 
     this.calcularPuntos = function(){
@@ -510,6 +523,12 @@ function Comodin4(valor){
 }
 }
 
+function Resultado(prop, ganador, puntos, numJug){
+    this.propietario = prop;
+    this.ganador = ganador;
+    this.puntos = puntos;
+    this.numeroJugadores = numJug;
+}
 /*
 //método para ejecutar más fácilmente el código en la consola de Chrome
 var juego;
@@ -533,6 +552,8 @@ function Prueba(){
     ju3.manoInicial();
     partida.cartaInicial();
 }*/
+
+
 
 //esta línea es fundamental para la parte del servidor
 module.exports.Juego = Juego;

@@ -65,7 +65,31 @@ app.get("/obtenerPartidasDisponibles", function(request, response){
         var res = juego.obtenerPartidasDisponibles();
         response.send(res);
     }
-})
+});
+app.get("/obtenerTodosResultados", function(request, response){
+    if(juego){
+        juego.obtenerTodosResultados(function(lista){
+            response.send(lista);
+        })
+    }
+});
+app.get("/obtenerResultados/:nick", function(request, response){
+    var nick = request.params.nick;
+    if(juego){
+        juego.obtenerTodosResultados({ganador:nick}, function(lista){
+            response.send(lista);
+        })
+    }
+});
+app.get("/cerrarSesion/:nick", function(request, response){
+    var nick = request.params.nick;
+    var ju1 = juego.usuarios[nick];
+    if(ju1){
+        ju1.cerrarSesion();
+        response.send({"res": "ok"});
+    }
+
+});
 
 http.listen(app.get('port'), function(){    //lanzamos el servidor
     console.log("La app NodeJS se está ejecutando en el puerto ", app.get('port'));

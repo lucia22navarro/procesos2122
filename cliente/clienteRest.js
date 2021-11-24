@@ -47,4 +47,18 @@ function ClienteRest(){
             iu.mostrarUnirAPartida(data);
         })
     }
+    this.obtenerTodosResultados = function(){
+        $.getJSON("/obtenerTodosResultados/", function(data){
+            //se ejecuta cuando conteste el servidor 
+            console.log(data);
+            //iu.mostrarListaResultados(data);
+        })
+    }
+    this.obtenerResultados = function(nick){
+        $.getJSON("/obtenerResultados/" + nick, function(data){
+            //se ejecuta cuando conteste el servidor 
+            console.log(data);
+            //iu.mostrarListaResultados(data);
+        })
+    }
 }
