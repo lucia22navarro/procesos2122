@@ -38,10 +38,12 @@ function ControlWeb(){
     this.mostrarAgregarJugador = function(){
         $("#op").remove();
        var cadena =         '<div id="mAJ">'
-       cadena = cadena +        '<label for="usr">Para comenzar a jugar, introduce un nick:</label>';
-       cadena = cadena +            '<input type="text" class="form-control" placeholder="Introduce tu nick"id="usr">'
-       cadena = cadena +            '<button type="button" id="btnAJ" class="btn btn-primary">Entrar</button>'
+       cadena = cadena +        '<label for="usr">Accede con Google</label><br>';
+       //cadena = cadena +            '<input type="text" class="form-control" placeholder="Introduce tu nick"id="usr">'
+       //cadena = cadena +            '<button type="button" id="btnAJ" class="btn btn-primary">Entrar</button>'
+       cadena = cadena +              '<a href="/auth/google" class="btn btn-primary">Entrar</a>'
        cadena = cadena +    '</div>';
+
        $("#agregarJugador").append(cadena);
         $("#btnAJ").on("click", function(){
             var nick = $('#usr').val();
