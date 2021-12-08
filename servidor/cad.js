@@ -67,7 +67,6 @@ function CAD(){
 
     this.conectar = function(callback){
         var cad = this;
-        mongo.connect("mongodb+srv://patata:patata@cluster0.jedyd.mongodb.net/resultados?retryWrites=true&w=majority", function(err,db){
             if(err){
                 console.log("No se pudo conectar");
             }
