@@ -167,10 +167,11 @@ function ServidorWS(){
                 if (ju1){
                     var codigo = ju1.codigoPartida;
                     var partida = juego.partidas[codigo];
-                   // if(partida){ //si está en una partida, avisa al resto de jugadores de que abandona
+                    if(partida){ //si está en una partida, avisa al resto de jugadores de que abandona
                         ju1.abandonarPartida();
+                        socket.leave(codigo);
                         cli.enviarATodosMenosRemitente(socket, cli.nick, codigo, "jugadorAbandona", {});
-                   // }
+                    }
                     ju1.cerrarSesion();
                     cli.enviarAlRemitente(socket, "usuarioEliminado", {});
 

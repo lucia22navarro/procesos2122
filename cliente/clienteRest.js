@@ -4,20 +4,42 @@ function ClienteRest(){
         $.ajax({
             type : 'POST',
             url : '/registrarUsuario',
-            data : JSON.stringify({"email":email, "clave":clave}),
+            data : {"email":email, "clave":clave},
             success: function(data){
-                if(data.email){
+                if(data.email!="nook"){
                     //mostrarLogin
                     console.log(data.email);
                 }
                 else{
                     console.log("No se ha podido registrar"); //email ya existe
+                    console.log(data.email);
                 }
             },
-            contentType : 'application/json', 
+            //contentType : 'application/json', 
             dataType : 'json',
         });
     }
+
+    this.loginUsuario = function(email, clave){
+        $.ajax({
+            type : 'POST',
+            url : '/loginUsuario',
+            data : {"email":email, "clave":clave},
+            success: function(data){
+                if(data.email!="nook"){
+                    //mostrarLogin
+                    console.log(data.email);
+                }
+                else{
+                    console.log("Usuario o clave incorrectos"); //email ya existe
+                }
+            },
+            //contentType : 'application/json', 
+            dataType : 'json',
+        });
+    }
+
+
 
     this.agregarJugador = function(nick){
         $.getJSON("/agregarJugador/" + nick, function(data){

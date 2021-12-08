@@ -117,14 +117,7 @@ function ClienteWS(){
             iu.mostrarModal("HAS PERDIDO LA PARTIDA");
 
         });
-        /*
-        this.socket.on("carta", function(data){
-            console.log(data);
-        });
-        this.socket.on("cartasRobada", function(data){
-            console.log(data);
-        });
-*/
+
         this.socket.on("fallo", function(data){
             console.log(data);
         });
@@ -132,6 +125,7 @@ function ClienteWS(){
             iu.mostrarModal("Un jugador abandona la partida.");
             iu.borrarMenu();
             iu.mostrarControl(cli.nick);
+            socket.leave(data.codigo);
 
         });
         this.socket.on("usuarioEliminado", function(){
@@ -140,7 +134,8 @@ function ClienteWS(){
             $.removeCookie("nick");
             iu.borrarMenu();
             iu.mostrarAgregarJugador();
-        })
+        });
+
     }
 
     this.conectar();

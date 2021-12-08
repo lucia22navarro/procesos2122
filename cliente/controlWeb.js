@@ -35,6 +35,8 @@ function ControlWeb(){
     }
 
 
+    //*******************PANTALLA DE INICIO*********************************
+
     this.mostrarAgregarJugador = function(){
         $("#op").remove();
        var cadena =         '<div id="mAJ">'

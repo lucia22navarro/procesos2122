@@ -3,6 +3,7 @@ var ObjectID = require("mongodb").ObjectID;
 
 function CAD(){
     this.resultadosCol = undefined;
+    this.usuariosCol = undefined;
 
 
     this.encontrarTodosResultados = function(callback){
@@ -10,13 +11,22 @@ function CAD(){
     }
 
     this.encontrarResultadoCriterio = function(criterio, callback){
-        encontrarCriterio(this.resultadosCol, criterio, callback);
+        encontrarCriterio(this.usuariosCol, criterio, callback);
     }
 
+    this.encontrarTodosUsuarios = function(callback){
+        encontrarTodos(this.resultadosCol, callback);
+    }
+
+    this.encontrarUsuarioCriterio = function(criterio, callback){
+        encontrarCriterio(this.usuariosCol, criterio, callback);
+    }
+
+    //las siguientes dos funciones sirven para cualquier tipo de colección
     //SELECT * FROM DATABASE WHERE (CRITERIO)
 
     function encontrarCriterio(coleccion, criterio, callback){
-        coleccion.find(criterio).toArray(function(err,col){
+        coleccion.find(criterio).toArray(function(err,datos){
             if(err){
                 callback([]);
             }
@@ -37,6 +47,10 @@ function CAD(){
 
     this.insertarResultado = function(resultado, callback){
         insertar(this.resultadosCol, resultado, callback);
+    }
+
+    this.insertarUsuario = function(usuario, callback){
+        insertar(this.usuariosCol, usuario, callback);
     }
 
     function insertar(coleccion, objeto, callback){
@@ -60,6 +74,8 @@ function CAD(){
             else{
                 console.log("Conectado a Atlas MongoDB");
                 cad.resultadosCol = db.db("juegodeluno").collection("resultados");
+                cad.usuariosCol = db.db("juegodeluno").collection("usuarios");
+
             }   
         })
     }

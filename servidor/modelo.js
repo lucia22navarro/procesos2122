@@ -5,15 +5,61 @@ function randomInt(low, high){
 
 //importar la clase para almacenar datos
 var cad = require("./cad.js")
+var cf = require("./cifrado.js");
+var moduloEmail = require("./email.js");
 
 
 /* JUEGO */
 
-function Juego(){
+function Juego(test){
 
     this.usuarios={}; //[]. Solo permite que exista un nick único
     this.partidas={};
-    this.cad = new cad.CAD();
+    //this.cad = new cad.CAD();
+
+    this.registrarUsuario=function(email,clave,cb){
+        var ju=this;
+        var claveCifrada=cf.encryptStr(clave,'sEcrEtA');
+        var nick=email;
+        var key = (new Date().valueOf()).toString();
+
+        this.cad.encontrarUsuarioCriterio({email:email},function(usr){
+            if (!usr){
+                ju.cad.insertarUsuario({email:email,clave:claveCifrada,nick:nick, key: key, confirmada: false},function(usu){
+                    cb({email:'ok'});
+                });
+                //enviar un email a la cuenta con un enlace de confirmación
+                moduloEmail.enviarEmailConfirmacion(email, key);
+            }
+            else{
+                cb({email:"nook"})
+            }
+        })
+    }
+
+
+    this.loginUsuario=function(email,clave,cb){
+        var ju=this;
+        var nick=email;
+        this.cad.encontrarUsuarioCriterio({email:email},function(usr){
+            if (usr){
+                var clavedesCifrada=cf.decryptStr(usr.clave,'cLaVeSecrEtA');
+                if (clave==clavedesCifrada && usr.confirmada){
+                    cb(null,usr);
+                    ju.agregarJugador(usr.nick);
+                    console.log("Usuario "+ usr.nick+" inicia sesión")
+                }
+                else{
+                   cb(null)
+                }
+            }
+            else{
+                cb(null)
+            }
+        })
+    }
+
+
 
     this.agregarJugador = function(nick){
         var res = {nick : -1};
@@ -68,7 +114,7 @@ function Juego(){
         var lista = [];
         for(each in this.partidas){
             var partida = this.partidas[each];
-            if(partida.fase.nombre == "inicial"){
+            if(partida.fase.esInicial()){
                 var huecos = partida.numJug - partida.numeroJugadores();
              //   if (partida.numeroJugadores() < partida.numJug){
                 lista.push({"propietario":partida.propietario, "codigo":each, "huecos":huecos});
@@ -127,7 +173,10 @@ function Juego(){
         });
     }
 
-    this.cad.conectar(function(){});
+    if(!test){
+        this.cad = new cad.CAD();
+        this.cad.conectar();
+    }
 }
 
 
@@ -140,6 +189,7 @@ function Jugador(nick, juego){
     this.mano=[];
     this.codigoPartida;
     this.puntos = 0;
+    this.estado = new Normal();
 
     this.crearPartida = function(numJug){
         return this.juego.crearPartida(nick, numJug);
@@ -219,6 +269,42 @@ function Jugador(nick, juego){
         var resultado = new Resultado(prop, this.nick,this.puntos, numJug);
         this.juego.insertarResultado(resultado);
     }
+
+    this.recibeTurno = function(partida){
+        this.estado.recibeTurno(partida, this);
+    }
+
+    this.bloquear = function(){
+        this.estado = new Bloqueado();
+    }
+
+    this.jugadorPuedeJugar = function(partida){
+        partida.turno = this;
+    }
+}
+
+/* ESTADO NORMAL */
+
+function Normal(){
+    this.nombre = "normal";
+
+    this.recibeTurno = function(partida, jugador){
+        jugador.jugadorPuedeJugar(partida);
+    }
+}
+
+
+/* BLOQUEADO */ 
+
+function Bloqueado(){
+    this.nombre = "bloqueado";
+
+    this.recibeTurno = function(partida, jugador){
+        jugador.jugadorPuedeJugar(partida);
+        jugador.pasarTurno();
+        jugador.estado = new Normal();
+    }
+
 }
 
 
@@ -238,6 +324,18 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
     this.ordenTurno = [];
     this.cartaActual;
     this.fase = new Inicial();
+
+    this.haTerminado = function(){
+        return this.fase.haTerminado();
+    }
+
+    this.esInicial = function(){
+        return this.fase.esInicial();
+    }
+
+    this.estaEnJuego = function(){
+        return this.fase.estaEnJuego();
+    }
 
     this.unirAPartida = function(jugador){
         this.fase.unirAPartida(this, jugador);
@@ -263,15 +361,15 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
                 this.mazo.push(new Numero(j,colores[i]));
                 this.mazo.push(new Numero(j,colores[i]));
             }
-            this.mazo.push(new Cambio(20, colores[i]));
-            this.mazo.push(new Mas2(20, colores[i]));
+           // this.mazo.push(new Cambio(20, colores[i]));
+           // this.mazo.push(new Mas2(20, colores[i]));
             this.mazo.push(new Bloqueo(20, colores[i]));
-            this.mazo.push(new Cambio(20, colores[i]));
-            this.mazo.push(new Mas2(20, colores[i]));
+           // this.mazo.push(new Cambio(20, colores[i]));
+          //  this.mazo.push(new Mas2(20, colores[i]));
             this.mazo.push(new Bloqueo(20, colores[i]));
             this.mazo.push(new Numero(0,colores[i]));
-            this.mazo.push(new Comodin(20));
-            this.mazo.push(new Comodin4(40));
+           // this.mazo.push(new Comodin(20));
+           // this.mazo.push(new Comodin4(40));
         }
         
     }
@@ -325,8 +423,25 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
                 siguiente = Object.keys(this.jugadores).length - 1;
             }
             this.turno=this.jugadores[this.ordenTurno[siguiente]];
+            var jugador = this.turno;
+            jugador.recibeTurno(this);
         }
     }
+
+
+    this.obtenerSiguiente = function(){
+       // var nick = this.turno.nick;
+        var indice=this.ordenTurno.indexOf(this.turno.nick);            
+        var siguiente=(indice + this.sentido)%(Object.keys(this.jugadores).length);
+        if (siguiente < 0) {
+            siguiente = Object.keys(this.jugadores).length - 1;
+        }
+        var jugador = this.jugadores[this.ordenTurno[siguiente]];
+        //this.turno=this.jugadores[this.ordenTurno[siguiente]];
+        return jugador;
+    }
+
+
 
     this.jugarCarta = function(carta, nick){
         this.fase.jugarCarta(carta,nick,this);
@@ -379,6 +494,14 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
         }
         this.turno.puntos = suma;
     }
+
+    this.bloquearSiguiente = function(){
+        var jugador = this.obtenerSiguiente();
+        jugador.estado = new Bloqueado();
+
+    }
+
+    
     
 
     this.crearMazo();
@@ -391,6 +514,15 @@ function Partida(codigo, jugador, numJug){ //se introduce el jugador completo (o
 function Inicial(){
     this.nombre = "inicial";
 
+    this.haTerminado = function(){
+        return false;
+    }
+    this.esInicial = function(){
+        return true;
+    }
+    this.estaEnJuego = function(){
+        return false;
+    }
 
     this.unirAPartida = function(partida, jugador){
         partida.puedeUnirAPartida(jugador);
@@ -423,14 +555,21 @@ function Inicial(){
 function Jugando(){
     this.nombre = "jugando";
 
+    this.haTerminado = function(){
+        return false;
+    }
+    this.esInicial = function(){
+        return false;
+    }
+    this.estaEnJuego = function(){
+        return true;
+    }
     this.unirAPartida = function(partida,jugador){
         console.log("La partida ya ha comenzado: no puedes unirte");
         jugador.codigoPartida = -1;
     }
 
-    this.esInicial = function(){
-        return false;
-    }
+
     this.jugarCarta = function(carta, nick, partida){
         partida.puedeJugarCarta(carta,nick);
     }
@@ -445,6 +584,15 @@ function Jugando(){
 function Final(){
     this.nombre = "final";
 
+    this.haTerminado = function(){
+        return true;
+    }
+    this.esInicial = function(){
+        return false;
+    }
+    this.estaEnJuego = function(){
+        return false;
+    }
     this.unirAPartida = function(partida,jugador){
         console.log("La partida ya ha terminado: no puedes unirte a la partida");
         jugador.codigoPartida = -1;
@@ -492,7 +640,7 @@ function Bloqueo(valor, color){
     this.valor=valor;
     this.nombre="bloqueo"+color;  
 	this.comprobarEfecto=function(partida){
-        partida.pasarTurno(partida.turno.nick);
+        partida.bloquearSiguiente();
 	}	
 }
 

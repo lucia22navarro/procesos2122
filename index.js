@@ -6,6 +6,7 @@ var { Server } = require("socket.io"); //importamos el objeto server para Servid
 var io = new Server(http); // entrada del objeto server
 var bodyParser = require("body-parser"); //parsear las peticiones de tipo POST
 var passport = require("passport");
+var LocalStrategy = require("passport-local").Strategy;
 var cookieSession = require("cookie-session");
 
 require("./servidor/passport-setup.js");
@@ -13,7 +14,7 @@ var modelo = require("./servidor/modelo.js");
 var ssrv = require("./servidor/servidorWS.js");  //importamos el objeto de webSocket
 const { response } = require("express");
 
-var juego = new modelo.Juego();
+var juego = new modelo.Juego(false);
 var servidorWS = new ssrv.ServidorWS();
 
 
@@ -22,10 +23,27 @@ app.set('port', process.env.PORT || 5000); //directiva de express que define una
                                             //necesario para el despliegue en heroku
 app.use(express.static(__dirname + "/")); //variable de entorno __dirname: nombre de toda la solución. en esta máquina: C:\lucia\proyectos\git\uno
 
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json());
+
+
 app.use(cookieSession({
     name : 'juegodeluno', 
     keys: ['key1', 'key2']
 }));
+
+passport.use(new LocalStrategy({usernameField:"email", passwordField:"clave"},
+    function(email, clave, done){
+        juego.loginUsuario(email, clave, function(err, user){
+            if(err){
+                return done(err)
+            }
+            else{
+                return done(null, user);
+            }
+        })
+    }
+    ));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -57,8 +75,7 @@ app.get("/auth/google", passport.authenticate('google', {scope:['profile', 'emai
 // /fail -> en caso de usuario no válido
 
 app.get("/good", function(request, response){
-    //definir el nick como el email del usuario de google
-    //agregarJugador(nick)
+
     var nick = request.user.emails[0].value;
     juego.agregarJugador(nick);
     response.cookie('nick', nick);
@@ -66,7 +83,7 @@ app.get("/good", function(request, response){
 });
 
 app.get("/fallo", function(req, res){
-    res.send("No se pudo iniciar sesión");
+    res.send({nick:"nook"});
 });
 
 app.get("/google/callback", passport.authenticate('google', {failureRedirect:'/fallo'}), function(req, res){
@@ -87,7 +104,25 @@ app.post('/registrarUsuario', function(request, response){
     juego.registrarUsuario(email, clave, function(data){
         response.send(data);
     })
-})
+});
+
+/*app.post('/loginUsuario',function(request,response){
+	var email=request.body.email;
+	var clave=request.body.clave;
+
+	juego.loginUsuario(email,clave,function(data){
+		response.send(data);
+	});
+});*/
+
+app.post("/loginUsuario", passport.authenticate("local",
+    {failureRedirect:"/fallo", successRedirect:"/ok"}
+));
+
+app.get("/ok", function(request, response){
+    response.send({nick:request.user.nick});
+});
+
 
 
 //crear partida
